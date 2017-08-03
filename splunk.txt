@@ -1,0 +1,100 @@
+--------------------------
+Create or ADD VM Machine
+----------------------------
+\boxes\xenial-server-cloudimg-amd64-vagrant.box
+
+sogare@DINMB621 MINGW64 /d/Users/sogare/boxes
+$ vagrant box list
+
+$vagrant box add <box_name> <box_file_name>
+$vagrant box add ubuntu-xenial-base xenial-server-cloudimg-amd64-vagrant.box
+
+sogare@DINMB621 MINGW64 /d/Users/sogare/boxes
+$ vagrant box list
+ubuntu-xenial-base (virtualbox, 0)
+
+------------------------------
+Installed splunk
+------------------------------
+sogare@DINMB621 MINGW64 /d/Users/sogare/with-ubuntu
+$ vagrant up
+
+sogare@DINMB621 MINGW64 /d/Users/sogare/with-ubuntu
+$ vagrant ssh
+
+ubuntu@puppetmaster2:~$ sudo su
+root@puppetmaster2:/home/ubuntu# cd /opt
+root@puppetmaster2:/opt# ls
+root@puppetmaster2:/opt# cd /vagrant/
+root@puppetmaster2:/vagrant# ls
+
+root@puppetmaster2:/vagrant# ls
+splunk-6.6.0-1c4f3bbe1aea-linux-2.6-amd64.deb  Vagrantfile
+ubuntu-xenial-16.04-cloudimg-console.log
+
+root@puppetmaster2:/vagrant# dpkg -i splunk-6.6.0-1c4f3bbe1aea-linux-2.6-amd64.deb
+
+
+root@puppetmaster2:/vagrant# cd /opt
+root@puppetmaster2:/opt# ls
+splunk
+root@puppetmaster2:/opt# cd splunk/bin/
+root@puppetmaster2:/opt/splunk/bin# ./splunk status --accept-license
+root@puppetmaster2:/opt/splunk/bin# ./splunk start --accept-license
+
+root@puppetmaster2:/opt/splunk/bin# ip addr
+###inet 172.31.0.202
+##URL - http://172.31.0.202:8000/
+ vagrant halt
+-----------------------
+Create Forwarder VM
+-----------------------
+splunkforwarder-6.6.0-1c4f3bbe1aea-linux-2.6-amd64.deb
+Vagrantfile
+
+sogare@DINMB621 MINGW64 /d/Users/sogare/with-ubuntu-2
+$ vagrant up
+
+sogare@DINMB621 MINGW64 /d/Users/sogare/with-ubuntu-2
+$ vagrant ssh
+
+ubuntu@forwarder1:~$ sudo su
+root@forwarder1:/home/ubuntu# cd /opt
+root@forwarder1:/opt# cd /vagrant/
+root@forwarder1:/vagrant# ls
+root@forwarder1:/vagrant# dpkg -i splunkforwarder-6.6.0-1c4f3bbe1aea-linux-2.6-amd64.deb
+root@forwarder1:/vagrant# cd /opt
+root@forwarder1:/opt# ls
+splunkforwarder
+root@forwarder1:/opt# cd splunkforwarder/
+root@forwarder1:/opt/splunkforwarder# cd bin/
+root@forwarder1:/opt/splunkforwarder/bin# ./splunk status --accept-license
+root@forwarder1:/opt/splunkforwarder/bin# ./splunk start --accept-license
+root@forwarder1:/opt/splunkforwarder/bin# ./splunk list forward-server
+root@forwarder1:/opt/splunkforwarder/bin# ./splunk add forward-server 172.31.0.202:9997
+root@forwarder1:/opt/splunkforwarder/bin# ./splunk restart
+root@forwarder1:/opt/splunkforwarder/bin# ./splunk list monitor
+root@forwarder1:/opt/splunkforwarder/bin# ./splunk add monitor /var/log/
+
+---
+Splunk Search Queries
+----
+index ="*" | stats count by host
+index ="*" | stats count by sourcetype
+
+sourcetype=access_* 
+sourcetype=access_* host="www1" buttercup*
+
+sourcetype=access_* status=200 "action=purchase" | top clientip
+sourcetype=access_* status=200 "action=purchase" | top limit=1 clientip
+
+sourcetype=access_* status=200 "action=purchase" 87.194.216.51 | stats count values(productid) by clientip
+sourcetype=access_* status=200 "action=purchase" 87.194.216.51 | stats count dc(productId) values(productId) by clientip
+
+sourcetype=access_* [search sourcetype=access_* status=200 action=purchase | top 1 clientip | table clientip] | stats count dc(productId) values(productId) by clientip
+
+sourcetype=access_* [search sourcetype=access_* status=200 action=purchase | top 2 clientip |  table clientip] | stats count dc(productId) values(productId) by clientip | tail
+
+sourcetype=access_* [search sourcetype=access_* status=200 action=purchase | top 2 clientip | table clientip] | stats count dc(productName) values(productName) by clientip | tail
+
+
