@@ -1,0 +1,40 @@
+Vagrant version
+Vagrant box list – list virtual boxes installed
+Vagrant box add Ubuntu-xenial-base xenial-server-cloudimg-amd64-vagrant.box – install box file ubuntu
+Vagrant up –startup the virtual box
+Vagrant status – status of current virtual box
+Vagrant global-status – status of all virtual box
+Vagrant ssh – for login
+cd /vagrant
+root@puppetmaster2:/vagrant# ls
+splunk-6.6.0-1c4f3bbe1aea-linux-2.6-amd64.deb  Vagrantfile
+ubuntu-xenial-16.04-cloudimg-console.log
+root@puppetmaster2:/vagrant# dpkg -i splunk-6.6.0-1c4f3bbe1aea-linux-2.6-amd64.deb – installing deb file
+
+
+dpkg -i splunkforwarder-6.6.0-1c4f3bbe1aea-linux-2.6-amd64.deb
+Vagrant suspend – hibernate
+Vagrant reload --provision
+Linux
+sudo su – login as super user
+cd /opt – change directory
+cd /splunk/bin
+./splunk status --accept-license
+./splunk list monitor – to view the log files
+./splunk add monitor /var/log -create folder named var/log
+./splunk list forward-server
+./splunk add forward-server 172.31.0.202:9997
+./splunk restart
+
+
+
+./splunk start
+
+ls – list directory
+./ - current directory
+ip addr – ip address
+
+
+edit with con file
+/opt/splunkforwarder/etc/system/local#
+
